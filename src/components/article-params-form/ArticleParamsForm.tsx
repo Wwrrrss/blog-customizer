@@ -8,31 +8,34 @@ import { Separator } from 'src/ui/separator';
 import { Select } from 'src/ui/select';
 import {
 	fontFamilyOptions,
-	OptionType,
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
 	fontSizeOptions,
 	defaultArticleState,
+	TOptionsState,
 } from 'src/constants/articleProps';
+import { Text } from 'src/ui/text';
 
-export const ArticleParamsForm = () => {
+export type ArticleFormProps = {
+	apply: (draftOptions: TOptionsState) => void;
+};
+
+export const ArticleParamsForm = (props: ArticleFormProps) => {
+	const { apply } = props;
+
 	const [isOpen, setIsOpen] = useState(false);
-	const [fontOption, setFontOption] = useState<OptionType>(
-		defaultArticleState.fontFamilyOption
-	);
-	const [fontColorOption, setFontColorOption] = useState<OptionType>(
-		defaultArticleState.fontColor
-	);
-	const [colorOption, setColorOption] = useState<OptionType>(
-		defaultArticleState.backgroundColor
-	);
-	const [widthOption, setWidthOption] = useState<OptionType>(
-		defaultArticleState.contentWidth
-	);
-	const [buttonOption, setButtonOption] = useState<OptionType>(
-		defaultArticleState.fontSizeOption
-	);
+	const [draftOptions, setDraftOptions] =
+		useState<TOptionsState>(defaultArticleState);
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		apply(draftOptions);
+	};
+	const handleReset = () => {
+		setDraftOptions(defaultArticleState);
+		apply(draftOptions);
+	};
 	return (
 		<>
 			<ArrowButton
@@ -47,57 +50,68 @@ export const ArticleParamsForm = () => {
 						? `${styles.container} ${styles.container_open}`
 						: styles.container
 				}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
+					<Text weight={800} size={31} uppercase>
+						задайте параметры
+					</Text>
 					<Select
-						selected={fontOption}
+						selected={draftOptions.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='шрифт'
 						onChange={(o) => {
-							setFontOption(o);
+							setDraftOptions({ ...draftOptions, fontFamilyOption: o });
 						}}
 					/>
-					<div className={styless.group} title='размер шрифта'>
-						{fontSizeOptions.map((e) => {
-							return (
-								<Option
-									key={`font-option-${e.value}`}
-									title={e.title}
-									value={e.value}
-									selected={buttonOption}
-									groupName='размер шрифта'
-									option={e}
-									onChange={(o) => {
-										setButtonOption(o);
-									}}
-								/>
-							);
-						})}
+					<div>
+						<Text weight={800} size={12} uppercase>
+							размер шрифта
+						</Text>
+						<div className={styless.group}>
+							{fontSizeOptions.map((e) => {
+								return (
+									<Option
+										key={`font-option-${e.value}`}
+										title={e.title}
+										value={e.value}
+										selected={draftOptions.fontSizeOption}
+										groupName='размер шрифта'
+										option={e}
+										onChange={(o) => {
+											setDraftOptions({ ...draftOptions, fontSizeOption: o });
+										}}
+									/>
+								);
+							})}
+						</div>
 					</div>
 					<Select
-						selected={fontColorOption}
+						selected={draftOptions.fontColor}
 						options={fontColors}
 						title='цвет шрифта'
 						onChange={(o) => {
-							setFontColorOption(o);
+							setDraftOptions({ ...draftOptions, fontColor: o });
 						}}
 					/>
 
 					<Separator />
 
 					<Select
-						selected={colorOption}
+						selected={draftOptions.backgroundColor}
 						options={backgroundColors}
 						title='цвет фона'
 						onChange={(o) => {
-							setColorOption(o);
+							setDraftOptions({ ...draftOptions, backgroundColor: o });
 						}}
 					/>
 					<Select
-						selected={widthOption}
+						selected={draftOptions.contentWidth}
 						options={contentWidthArr}
 						title='ширина контента'
 						onChange={(o) => {
-							setWidthOption(o);
+							setDraftOptions({ ...draftOptions, contentWidth: o });
 						}}
 					/>
 					<div className={styles.bottomContainer}>
