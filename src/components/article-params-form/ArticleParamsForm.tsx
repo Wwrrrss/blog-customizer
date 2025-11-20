@@ -31,10 +31,12 @@ export const ArticleParamsForm = (props: ArticleFormProps) => {
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		apply(draftOptions);
+		setIsOpen(false);
 	};
 	const handleReset = () => {
 		setDraftOptions(defaultArticleState);
-		apply(draftOptions);
+		apply(defaultArticleState);
+		setIsOpen(false);
 	};
 	return (
 		<>

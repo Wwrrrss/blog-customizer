@@ -13,10 +13,10 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
-	const [currentOptions, setCurentOptions] =
+	const [currentOptions, setCurrentOptions] =
 		useState<TOptionsState>(defaultArticleState);
 	const applyStyles = (draftOptions: TOptionsState) => {
-		setCurentOptions(draftOptions);
+		setCurrentOptions(draftOptions);
 	};
 
 	return (
