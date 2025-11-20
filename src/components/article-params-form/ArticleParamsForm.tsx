@@ -16,6 +16,7 @@ import {
 	TOptionsState,
 } from 'src/constants/articleProps';
 import { Text } from 'src/ui/text';
+import clsx from 'clsx';
 
 export type ArticleFormProps = {
 	apply: (draftOptions: TOptionsState) => void;
@@ -47,11 +48,9 @@ export const ArticleParamsForm = (props: ArticleFormProps) => {
 				}}
 			/>
 			<aside
-				className={
-					isOpen
-						? `${styles.container} ${styles.container_open}`
-						: styles.container
-				}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
