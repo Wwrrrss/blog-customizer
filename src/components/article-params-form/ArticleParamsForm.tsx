@@ -1,6 +1,6 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './ArticleParamsForm.module.scss';
 import styless from 'src/ui/radio-group/RadioGroup.module.scss';
 import { Option } from 'src/ui/radio-group/Option';
@@ -26,6 +26,35 @@ export const ArticleParamsForm = (props: ArticleFormProps) => {
 	const { apply } = props;
 
 	const [isOpen, setIsOpen] = useState(false);
+	const formRef = useRef<HTMLDivElement | null>(null);
+	const buttonRef = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleClick = (e: MouseEvent) => {
+			const formEl = formRef.current;
+			const buttonEl = buttonRef.current;
+			if (!formEl || !buttonEl) return;
+
+			const clickX = e.clientX;
+
+			const formRect = formEl.getBoundingClientRect();
+			const buttonRect = buttonEl.getBoundingClientRect();
+
+			const clickOnButton =
+				clickX >= buttonRect.left &&
+				clickX <= buttonRect.right &&
+				e.clientY <= buttonRect.bottom;
+			if (clickOnButton) return;
+
+			const clickRightOfForm = clickX > formRect.right;
+			if (clickRightOfForm) setIsOpen(false);
+		};
+
+		document.addEventListener('click', handleClick);
+		return () => document.removeEventListener('click', handleClick);
+	}, [isOpen]);
+
 	const [draftOptions, setDraftOptions] =
 		useState<TOptionsState>(defaultArticleState);
 
@@ -42,12 +71,14 @@ export const ArticleParamsForm = (props: ArticleFormProps) => {
 	return (
 		<>
 			<ArrowButton
+				innerRef={buttonRef}
 				isOpen={isOpen}
 				onClick={() => {
 					setIsOpen(!isOpen);
 				}}
 			/>
 			<aside
+				ref={formRef}
 				className={clsx(styles.container, {
 					[styles.container_open]: isOpen,
 				})}>
